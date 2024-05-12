@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semiconductor BandGap</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: blue;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="header">
+        <h1>Semiconductor BandGap</h1>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Entry</th>
+                <th>Saturation Current</th>
+                <th>Temperature</th>
+            </tr>
+        </thead>
+        <tbody id="dataRows">
+            <!-- Rows will be dynamically added here -->
+        </tbody>
+    </table>
+    <input type="text" id="saturation_current" placeholder="Enter Saturation Current">
+    <input type="text" id="temperature" placeholder="Enter Temperature">
+    <input type="submit" value="Add Entry" onclick="addEntry()">
+    <button onclick="plotGraph()">Plot Graph</button>
+    <canvas id="myChart"></canvas>
+    <!-- Add JavaScript for adding entries and plotting graph here -->
+    <script>
+        var entryCount = 0;
+        var saturationCurrentData = [];
+        var temperatureData = [];
+
+        function addEntry() {
+            var saturationCurrent = document.getElementById('saturation_current').value;
+            var temperature = document.getElementById('temperature').value;
+
+            // Validate input
+            if (saturationCurrent === "" || temperature === "") {
+                alert("Please enter values for Saturation Current and Temperature.");
+                return;
+            }
+
+            // Increment entryCount for each entry added
+            entryCount++;
+
+            // Add data to arrays
+            saturationCurrentData.push(saturationCurrent);
+            temperatureData.push(temperature);
+
+            // Create a new row
+            var newRow = document.createElement('tr');
+
+            // Add entry number
+            var entryCell = document.createElement('td');
+            entryCell.textContent = entryCount;
+            newRow.appendChild(entryCell);
+
+            // Add saturation current value
+            var saturationCell = document.createElement('td');
+            saturationCell.textContent = saturationCurrent;
+            newRow.appendChild(saturationCell);
+
+            // Add temperature value
+            var temperatureCell = document.createElement('td');
+            temperatureCell.textContent = temperature;
+            newRow.appendChild(temperatureCell);
+
+            // Append the new row to the table
+            document.getElementById('dataRows').appendChild(newRow);
+
+            // Clear input fields after adding entry
+            document.getElementById('saturation_current').value = "";
+            document.getElementById('temperature').value = "";
+        }
+
+        function plotGraph() {
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Temperature vs Saturation Current',
+                        data: saturationCurrentData.map((value, index) => ({ x: value, y: temperatureData[index] })),
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                        pointRadius: 5,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Saturation Current'
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            position: 'left',
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Temperature'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
